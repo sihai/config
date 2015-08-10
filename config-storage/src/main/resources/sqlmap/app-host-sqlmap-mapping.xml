@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+<sqlMap namespace="appHostDAO">
+	<typeAlias alias="appHost" type="com.opentech.cloud.config.client.app.AppHost" />
+ 
+	<resultMap id="appHostResultMap" class="appHost">
+		<result column="id" property="id" />
+		<result column="app_id" property="appId" />
+		<result column="name" property="name" />
+		<result column="ip" property="ip" />
+		<result column="config" property="config" />
+		<result column="status" property="status" />
+		<result column="creator" property="creator" />
+		<result column="mender" property="mender" />
+		<result column="create_time" property="createTime" />
+		<result column="last_modified_time" property="lastModifiedTime" />
+	</resultMap>
+	
+	<insert id="insert" parameterClass="appHost">
+	    <![CDATA[
+	    	INSERT INTO app_host (
+	    		id,
+	    		app_id,
+	    		name,
+				ip,
+				config,
+				status,
+				creator,
+				mender,
+				create_time,
+				last_modified_time
+			) VALUES (
+				null,
+				#appId#,
+				#name#,
+				#ip#,
+				#config#,
+				#status#,
+				#creator#,
+				#mender#,
+				#createTime#,
+				#lastModifiedTime#
+			)
+	    ]]>
+	    <selectKey resultClass="long" keyProperty="id" >
+   			<![CDATA[
+   				SELECT @@IDENTITY AS id
+   			]]>
+   		</selectKey> 
+	</insert>
+	
+	<select id="queryByAppIdAndStatus" parameterClass="long" resultMap="appHostResultMap">
+		<![CDATA[
+		    	SELECT
+		    		id,
+		    		app_id,
+		    		name,
+					ip,
+					config,
+					status,
+					creator,
+					mender,
+					create_time,
+					last_modified_time
+				FROM
+					app_host t
+		       WHERE
+		       			app_id = #appId#
+		 	]]>
+		 	<dynamic>
+		 		<isNotNull property="status" prepend="and">  
+                    <![CDATA[
+                    status = #status#
+                    ]]>
+                </isNotNull>  
+		 	</dynamic>
+	</select>	
+	
+	<update id="update" parameterClass="appHost">
+			<![CDATA[
+		    	UPDATE
+					app_host
+				SET
+					name = #name#,
+					ip = #ip#,
+					config = #config#,
+					status = #status#,
+					mender = #mender#,
+					last_modified_time = now()
+				WHERE
+					id = #id# 
+		 	]]>
+	</update>
+	
+	<delete id="deleteById" parameterClass="long">
+			<![CDATA[
+		    	DELETE
+		    	FROM
+					app_host
+				WHERE
+					id = #value#
+		 	]]>
+	</delete>
+</sqlMap>

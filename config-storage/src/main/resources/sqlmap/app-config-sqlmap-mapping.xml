@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+<sqlMap namespace="appConfigDAO">
+	<typeAlias alias="appConfig" type="com.opentech.cloud.config.client.app.AppConfig" />
+ 
+	<resultMap id="appConfigResultMap" class="appConfig">
+		<result column="id" property="id" />
+		<result column="app_id" property="appId" />
+		<result column="key" property="key" />
+		<result column="value" property="value" />
+		<result column="version" property="version" />
+		<result column="creator" property="creator" />
+		<result column="mender" property="mender" />
+		<result column="create_time" property="createTime" />
+		<result column="last_modified_time" property="lastModifiedTime" />
+	</resultMap>
+	
+	<insert id="insert" parameterClass="appConfig">
+	    <![CDATA[
+	    	INSERT INTO app_config (
+	    		id,
+	    		app_id,
+	    		`key`,
+				`value`,
+				`version`,
+				creator,
+				mender,
+				create_time,
+				last_modified_time
+			) VALUES (
+				null,
+				#appId#,
+				#key#,
+				#value#,
+				#version#,
+				#creator#,
+				#mender#,
+				#createTime#,
+				#lastModifiedTime#
+			)
+	    ]]>
+	    <selectKey resultClass="long" keyProperty="id" >
+   			<![CDATA[
+   				SELECT @@IDENTITY AS id
+   			]]>
+   		</selectKey> 
+	</insert>
+	
+	<select id="queryByAppIdAndKey" parameterClass="map" resultMap="appConfigResultMap">
+		<![CDATA[
+		    	SELECT
+		    		id,
+		    		app_id,
+		    		`key`,
+					`value`,
+					`version`,
+					creator,
+					mender,
+					create_time,
+					last_modified_time
+				FROM
+					app_config t
+		       WHERE
+		       			app_id = #appId#
+		       		AND
+		       			`key` = #value#
+		 	]]>
+	</select>
+	
+	<select id="queryByAppIdAndKeyAndVersion" parameterClass="map" resultMap="appConfigResultMap">
+		<![CDATA[
+		    	SELECT
+		    		id,
+		    		app_id,
+		    		`key`,
+					`value`,
+					`version`,
+					creator,
+					mender,
+					create_time,
+					last_modified_time
+				FROM
+					app_config t
+		       WHERE
+		       			app_id = #appId#
+		       		AND
+		       			`key` = #key#
+		       		AND
+		       			`version` > #version#
+		 	]]>
+	</select>
+	
+	<select id="queryByAppIdAndQ" parameterClass="map" resultMap="appConfigResultMap">
+		<![CDATA[
+		    	SELECT
+		    		id,
+		    		app_id,
+		    		`key`,
+					`value`,
+					`version`,
+					creator,
+					mender,
+					create_time,
+					last_modified_time
+				FROM
+					app_config t
+		       WHERE
+		       			app_id = #appId#
+		       		AND
+		       			`key` LIKE CONCAT('%', #q#, '%')
+		       ORDER BY id DESC
+		       LIMIT #start#, #pageSize#
+		 	]]>
+	</select>
+	
+	<select id="countByAppIdAndQ" parameterClass="map" resultClass="int">
+			<![CDATA[
+		    	SELECT
+					COUNT(id)
+				FROM
+					app_config
+				WHERE
+		       			app_id = #appId#
+		       		AND
+		       			`key` LIKE CONCAT('%', #q#, '%')
+		 	]]>
+	</select>
+	
+	<update id="update" parameterClass="appConfig">
+			<![CDATA[
+		    	UPDATE
+					app_config
+				SET
+					`value` = #value#,
+					`version` = #version# + 1,
+					mender = #mender#,
+					last_modified_time = now()
+				WHERE
+						app_id = #appId#
+					AND
+						`key` = #key#
+					AND
+						`version` = #version#
+		 	]]>
+	</update>
+	
+	<delete id="deleteById" parameterClass="long">
+			<![CDATA[
+		    	DELETE
+		    	FROM
+					app_config
+				WHERE
+						id = #value#
+		 	]]>
+	</delete>
+</sqlMap>

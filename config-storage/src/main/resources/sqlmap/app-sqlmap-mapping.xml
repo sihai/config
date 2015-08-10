@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+<sqlMap namespace="appDAO">
+	<typeAlias alias="app" type="com.opentech.cloud.config.client.app.App" />
+ 
+	<resultMap id="appResultMap" class="app">
+		<result column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="desc" property="desc" />
+		<result column="creator" property="creator" />
+		<result column="mender" property="mender" />
+		<result column="create_time" property="createTime" />
+		<result column="last_modified_time" property="lastModifiedTime" />
+	</resultMap>
+	
+	<insert id="insert" parameterClass="app">
+	    <![CDATA[
+	    	INSERT INTO app (
+	    		id,
+	    		name,
+	    		desc,
+				creator,
+				mender,
+				create_time,
+				last_modified_time
+			) VALUES (
+				null,
+				#name#,
+				#desc#,
+				#creator#,
+				#mender#,
+				#createTime#,
+				#lastModifiedTime#
+			)
+	    ]]>
+	    <selectKey resultClass="long" keyProperty="id" >
+   			<![CDATA[
+   				SELECT @@IDENTITY AS id
+   			]]>
+   		</selectKey> 
+	</insert>
+	
+	<select id="queryByName" parameterClass="string" resultMap="appResultMap">
+		<![CDATA[
+		    	SELECT
+		    		id,
+		    		name,
+		    		desc,
+					creator,
+					mender,
+					create_time,
+					last_modified_time
+				FROM
+					app t
+		       WHERE
+		       		name = #value#
+		 	]]>
+	</select>
+	
+	<select id="queryByQ" parameterClass="map" resultMap="appResultMap">
+		<![CDATA[
+		    	SELECT
+		    		id,
+		    		name,
+		    		desc,
+					creator,
+					mender,
+					create_time,
+					last_modified_time
+				FROM
+					app t
+		       WHERE
+		       		name LIKE CONCAT('%', #q#, '%')  
+		       ORDER BY id DESC
+		       LIMIT #start#, #pageSize#
+		 	]]>
+	</select>
+	
+	<select id="countByQ" parameterClass="string" resultClass="int">
+			<![CDATA[
+		    	SELECT
+					COUNT(id)
+				FROM
+					app
+				WHERE
+					name LIKE CONCAT('%', #q#, '%')  
+		 	]]>
+	</select>
+	
+	<update id="update" parameterClass="config">
+			<![CDATA[
+		    	UPDATE
+					app
+				SET
+					name = #name#,
+					desc = #desc#,
+					mender = #mender#,
+					last_modified_time = now()
+				WHERE
+						id = #id#
+		 	]]>
+	</update>
+	
+	<delete id="delete" parameterClass="long">
+			<![CDATA[
+		    	DELETE
+		    	FROM
+					app
+				WHERE
+					id = #value#
+		 	]]>
+	</delete>
+</sqlMap>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+<sqlMap namespace="configPublishHostDAO">
+	<typeAlias alias="configPublishHost" type="com.opentech.cloud.config.client.publish.ConfigPublishHost" />
+ 
+	<resultMap id="configPublishHostResultMap" class="configPublishHost">
+		<result column="id" property="id" />
+		<result column="publish_id" property="publishId" />
+		<result column="host_id" property="hostId" />
+		<result column="status" property="status" />
+		<result column="creator" property="creator" />
+		<result column="mender" property="mender" />
+		<result column="create_time" property="createTime" />
+		<result column="last_modified_time" property="lastModifiedTime" />
+	</resultMap>
+	
+	<insert id="insert" parameterClass="configPublishHost">
+	    <![CDATA[
+	    	INSERT INTO config_publish_host (
+	    		id,
+	    		publish_id,
+	    		host_id,
+				status,
+				creator,
+				mender,
+				create_time,
+				last_modified_time
+			) VALUES (
+				null,
+				#publishId#,
+				#hostId#,
+				#status#,
+				#creator#,
+				#mender#,
+				#createTime#,
+				#lastModifiedTime#
+			)
+	    ]]>
+	    <selectKey resultClass="long" keyProperty="id" >
+   			<![CDATA[
+   				SELECT @@IDENTITY AS id
+   			]]>
+   		</selectKey> 
+	</insert>
+	
+	<select id="queryByPublishId" parameterClass="map" resultMap="configPublishHostResultMap">
+		<![CDATA[
+		    	SELECT
+		    		id,
+		    		publish_id,
+		    		host_id,
+					status,
+					creator,
+					mender,
+					create_time,
+					last_modified_time
+				FROM
+					config_publish_host t
+		       	WHERE
+		       		publish_id = #publishId#
+		       	ORDER BY id ASC
+		 	]]>
+	</select>	
+	
+	<update id="update" parameterClass="configPublishHost">
+			<![CDATA[
+		    	UPDATE
+					config_publish_host
+				SET
+					status = #status#,
+					mender = #mender#,
+					last_modified_time = now()
+				WHERE
+					id = #id# 
+		 	]]>
+	</update>
+	
+	<delete id="deleteByPublishId" parameterClass="long">
+			<![CDATA[
+		    	DELETE
+		    	FROM
+					config_publish_host
+				WHERE
+					publish_id = #value#
+		 	]]>
+	</delete>
+</sqlMap>

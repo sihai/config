@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+<sqlMap namespace="appStaffDAO">
+	<typeAlias alias="appStaff" type="com.opentech.cloud.config.client.app.AppStaff" />
+ 
+	<resultMap id="appStaffResultMap" class="appStaff">
+		<result column="id" property="id" />
+		<result column="app_id" property="appId" />
+		<result column="name" property="name" />
+		<result column="role" property="role" />
+		<result column="creator" property="creator" />
+		<result column="mender" property="mender" />
+		<result column="create_time" property="createTime" />
+		<result column="last_modified_time" property="lastModifiedTime" />
+	</resultMap>
+	
+	<insert id="insert" parameterClass="appStaff">
+	    <![CDATA[
+	    	INSERT INTO app_staff (
+	    		id,
+	    		app_id,
+	    		name,
+				role,
+				creator,
+				mender,
+				create_time,
+				last_modified_time
+			) VALUES (
+				null,
+				#appId#,
+				#name#,
+				#role#,
+				#creator#,
+				#mender#,
+				#createTime#,
+				#lastModifiedTime#
+			)
+	    ]]>
+	    <selectKey resultClass="long" keyProperty="id" >
+   			<![CDATA[
+   				SELECT @@IDENTITY AS id
+   			]]>
+   		</selectKey> 
+	</insert>
+	
+	<select id="queryByAppIdAndRole" parameterClass="map" resultMap="appStaffResultMap">
+		<![CDATA[
+		    	SELECT
+		    		id,
+		    		app_id,
+		    		name,
+					role,
+					creator,
+					mender,
+					create_time,
+					last_modified_time
+				FROM
+					app_staff t
+		       WHERE
+		       			app_id = #appId#
+		       		AND
+		       			role = #role#
+		       ORDER BY id ASC
+		 	]]>
+	</select>
+	
+	<update id="update" parameterClass="appStaff">
+			<![CDATA[
+		    	UPDATE
+					app_staff
+				SET
+					name = #name#,
+					role = #role#,
+					mender = #mender#,
+					last_modified_time = now()
+				WHERE
+					id = #id# 
+		 	]]>
+	</update>
+	
+	<delete id="deleteById" parameterClass="long">
+			<![CDATA[
+		    	DELETE
+		    	FROM
+					app_staff
+				WHERE
+					id = #value#
+		 	]]>
+	</delete>
+</sqlMap>

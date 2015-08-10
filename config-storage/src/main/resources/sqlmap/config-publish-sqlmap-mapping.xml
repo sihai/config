@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+<sqlMap namespace="configPublishDAO">
+	<typeAlias alias="configPublish" type="com.opentech.cloud.config.client.publish.ConfigPublish" />
+ 
+	<resultMap id="configPublishResultMap" class="configPublish">
+		<result column="id" property="id" />
+		<result column="config_id" property="configId" />
+		<result column="value" property="value" />
+		<result column="version" property="version" />
+		<result column="reason" property="reason" />
+		<result column="creator" property="creator" />
+		<result column="mender" property="mender" />
+		<result column="create_time" property="createTime" />
+		<result column="last_modified_time" property="lastModifiedTime" />
+	</resultMap>
+	
+	<insert id="insert" parameterClass="configPublish">
+	    <![CDATA[
+	    	INSERT INTO config_publish (
+	    		id,
+	    		config_id,
+				`value`,
+				`version`,
+				reason,
+				creator,
+				mender,
+				create_time,
+				last_modified_time
+			) VALUES (
+				null,
+				#configId#,
+				#value#,
+				#version#,
+				#reason#,
+				#creator#,
+				#mender#,
+				#createTime#,
+				#lastModifiedTime#
+			)
+	    ]]>
+	    <selectKey resultClass="long" keyProperty="id" >
+   			<![CDATA[
+   				SELECT @@IDENTITY AS id
+   			]]>
+   		</selectKey> 
+	</insert>
+	
+	<select id="queryByConfigId" parameterClass="map" resultMap="configChangedLogResultMap">
+		<![CDATA[
+		    	SELECT
+		    		id,
+		    		config_id,
+					`value`,
+					`version`,
+					reason,
+					creator,
+					mender,
+					create_time,
+					last_modified_time
+				FROM
+					config_publish t
+		       WHERE
+		       		config_id = #configId#
+		       ORDER BY version DESC
+		       LIMIT #start#, #pageSize#
+		 	]]>
+	</select>
+	
+	<select id="countByConfigId" parameterClass="long" resultClass="int">
+		<![CDATA[
+		    	SELECT
+		    		COUNT(id)
+				FROM
+					config_publish t
+		       WHERE
+		       		config_id = #configId#
+		 	]]>
+	</select>
+	
+	<delete id="deleteByConfigId" parameterClass="long">
+			<![CDATA[
+		    	DELETE
+		    	FROM
+					config_publish
+				WHERE
+					config_id = #value#
+		 	]]>
+	</delete>
+</sqlMap>
